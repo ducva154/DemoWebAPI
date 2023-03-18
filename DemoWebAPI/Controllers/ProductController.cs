@@ -18,25 +18,25 @@ namespace DemoWebAPI.Controllers
             _productService = productService;
         }
 
-        [HttpGet]
+        [HttpGet("products")]
         public IActionResult GetAll()
         {
             return StatusCode(StatusCodes.Status200OK, _productService.GetAll());
         }
 
-        [HttpGet("get-by-name/{productName}")]
-        public IActionResult GetByName(string productName)
+        [HttpGet("product/{name}")]
+        public IActionResult GetByName(string name)
         {
-            return StatusCode(StatusCodes.Status200OK, _productService.GetByName(productName));
+            return StatusCode(StatusCodes.Status200OK, _productService.GetByName(name));
         }
 
-        [HttpGet("get-list-by-name/{productName}")]
-        public IActionResult GetListByName(string productName)
+        [HttpGet("products/{name}")]
+        public IActionResult GetListByName(string name)
         {
-            return StatusCode(StatusCodes.Status200OK, _productService.GetListByName(productName));
+            return StatusCode(StatusCodes.Status200OK, _productService.GetListByName(name));
         }
 
-        [HttpGet("get-by-id/{id}")]
+        [HttpGet("product/{id}")]
         public IActionResult GetById(int id)
         {
             try
@@ -49,7 +49,7 @@ namespace DemoWebAPI.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("product")]
         public IActionResult Add([FromBody] AddProductRequest request)
         {
             try
@@ -62,7 +62,7 @@ namespace DemoWebAPI.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPut("product/{id}")]
         public IActionResult Update(int id, [FromBody] UpdateProductRequest request)
         {
             try
@@ -76,7 +76,7 @@ namespace DemoWebAPI.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete("product/{id}")]
         public IActionResult DeleteById(int id)
         {
             try
