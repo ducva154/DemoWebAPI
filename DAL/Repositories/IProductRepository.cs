@@ -7,12 +7,7 @@ using System.Threading.Tasks;
 
 namespace DAL.Repositories
 {
-    public interface IProductRepository
+    public interface IProductRepository : IRepositoryBase<Product>
     {
-        Product GetById(int id);
-        IEnumerable<Product> GetAll();
-        void Add(Product product);
-        void Delete(Product product);
-        int SaveChanges();
     }
 }

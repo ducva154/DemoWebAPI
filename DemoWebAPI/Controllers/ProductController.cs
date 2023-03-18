@@ -1,10 +1,10 @@
 ﻿using Azure.Core;
 using BLL.Service;
 using DTO.Entity;
+using DTO.Exceptions;
+using DTO.Constants;
 using DTO.Models.Request;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 
 namespace DemoWebAPI.Controllers
 {
@@ -18,37 +18,76 @@ namespace DemoWebAPI.Controllers
             _productService = productService;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            return StatusCode(StatusCodes.Status200OK, _productService.GetAll());
+        }
+
+        [HttpGet("get-by-name/{productName}")]
+        public IActionResult GetByName(string productName)
+        {
+            return StatusCode(StatusCodes.Status200OK, _productService.GetByName(productName));
+        }
+
+        [HttpGet("get-list-by-name/{productName}")]
+        public IActionResult GetListByName(string productName)
+        {
+            return StatusCode(StatusCodes.Status200OK, _productService.GetListByName(productName));
+        }
+
+        [HttpGet("get-by-id/{id}")]
         public IActionResult GetById(int id)
         {
-            Product product = _productService.GetById(id);
-
-            return product == null ? StatusCode(StatusCodes.Status400BadRequest) 
-                : StatusCode(StatusCodes.Status200OK, product);
+            try
+            {
+                return StatusCode(StatusCodes.Status200OK, _productService.GetId(id));
+            }
+            catch (BusinessException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
         }
 
         [HttpPost]
         public IActionResult Add([FromBody] AddProductRequest request)
         {
-            if (request.Name.IsNullOrEmpty())
+            try
             {
-                return StatusCode(StatusCodes.Status400BadRequest, "Product name is null");
+                return StatusCode(StatusCodes.Status201Created, _productService.Add(request));
             }
-            return StatusCode(StatusCodes.Status201Created, _productService.Add(request));
+            catch (BusinessException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
         }
 
         [HttpPut]
         public IActionResult Update(int id, [FromBody] UpdateProductRequest request)
         {
-            _productService.Update(id, request);
-            return StatusCode(StatusCodes.Status200OK);
+            try
+            {
+                _productService.Update(id, request);
+                return StatusCode(StatusCodes.Status200OK, ResponseMessageConstant.UPDATE_SUCCESS);
+            }
+            catch (BusinessException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
         }
 
         [HttpDelete]
         public IActionResult DeleteById(int id)
         {
-            _productService.Delete(id);
-            return StatusCode(StatusCodes.Status200OK);
+            try
+            {
+                _productService.Remove(id);
+                return StatusCode(StatusCodes.Status200OK, ResponseMessageConstant.DELETE_SUCCESS);
+            }
+            catch (BusinessException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
         }
     }
 }
